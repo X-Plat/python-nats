@@ -16,7 +16,6 @@ class Stat(object):
         self.bytes_received = 0
         self.bytes_sent = 0
 
-
     def query(self):
         'clear all the statistics'
         return json.dumps({

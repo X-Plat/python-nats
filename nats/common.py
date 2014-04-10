@@ -1,7 +1,7 @@
 "common functions"
 import urllib, os
-from nats.error import (NatsClientException,
-	UriInvalidException)
+from nats.error import NotImplementException
+
 
 class Common(object):
     'common data'
@@ -54,12 +54,13 @@ class Common(object):
         '''
 
         if type(server_addr) is not str: 
-            raise NatsClientException
+            raise NotImplementException
 
         protocol, after_split = urllib.splittype(server_addr)
 
         if not protocol == "nats": 
-            raise UriInvalidException("Invalid uri")
+            raise NotImplementException
+
         auth, after_split = urllib.splituser(after_split)
         user_raw, pswd = urllib.splitpasswd(auth)
         user = user_raw.lstrip("/")

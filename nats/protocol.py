@@ -1,6 +1,7 @@
 ''''nats protocol'''
 
 import re, json
+from nats.error import NotImplementException
 
 class Protocol(object):
     "nats protocol class"
@@ -30,6 +31,8 @@ class Protocol(object):
     def protocol_regular(cls, proto):
         'acquire the protocol regular expession'
         exp = cls.PROTOCOL_TABLE.get(proto)
+        if not exp:
+            raise NotImplementedError
         return re.compile(exp)
 
     @classmethod
@@ -62,7 +65,7 @@ class Protocol(object):
     @classmethod
     def pong_response(cls):
         'pong response from nats server'
-        return "PING" + cls.CR_LF 
+        return "PONG" + cls.CR_LF 
 
     @classmethod
     def connect_command(cls, conn_opts):

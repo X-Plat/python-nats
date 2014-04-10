@@ -2,6 +2,10 @@ class UriInvalidException(Exception):
     def __init__(self, uri):
         self.invalidUri = uri
         self.message = "[{}] {} is invalid!".format(str(self.__class__).split('.')[1], uri)
+        
+class NotImplementException(Exception):
+    def __init__(self):
+        self.message = "Not supported usage."
 
 class NatsException(Exception):
     def __init__(self, desc):

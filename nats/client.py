@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 '''
-Nats client
+Python version nats client lib for NATS message bus;
 '''
 import json
 import inspect
@@ -15,7 +15,7 @@ from nats.error import (
     NatsClientException)
 
 class NatsClient(object):
-    'nats client'
+    'nats client class'
 
     def __init__(self, **argvs):
         self.subs = {}
