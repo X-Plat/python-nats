@@ -1,8 +1,8 @@
 "heartbeat between client and server"
 
-from nats.const import Const
 from twisted.internet.task import LoopingCall
 from nats.protocol import Protocol
+from nats.common import Common
 import Queue
 
 class Heartbeat(object):
@@ -13,8 +13,8 @@ class Heartbeat(object):
         self.pongs = Queue.Queue(-1)
         self.pings_outstanding = 0
         self.pongs_received = 0
-        #self.ping_interval = Const.DEFAULT_PING_INTERVAL
-        #self.max_outstanding_pings = Const.DEFAULT_PING_MAX
+        #self.ping_interval = Common.DEFAULT_PING_INTERVAL
+        #self.max_outstanding_pings = Common.DEFAULT_PING_MAX
         self.conn = conn
         self.worker = self.create()
 
@@ -48,7 +48,7 @@ class Heartbeat(object):
 
     def start(self):
         'start ping timer'
-        self.worker.start(Const.DEFAULT_PING_INTERVAL)
+        self.worker.start(Common.DEFAULT_PING_INTERVAL)
         
     def process_pong(self):
         "process pong response from nats server"
