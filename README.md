@@ -20,29 +20,27 @@ python setup install
 import time
 from nats.client import NatsClient
 
-nats = NatsClient()
-conn, error  = nats.connect_nats({
-    "uri" : NATS_URI })
-
-if error: sys.exit(-1)
-
+nats = NatsClient(uris=NATS_URI)
+nats.start()
 time.sleep(1)
 
-def request_cb(msg, reply):
+def request_blk(msg, reply):
     print  "received {}".format(msg)
-    nats.publish(reply, "I can help!")
+    nats.publish(reply, "dispatch some job to publishers!")
 
-def subscribe_cb(msg):
+def subscribe_blk(msg):
     print "received {}".format(msg)
 
-def publish_cb():
-    print "published one message"
+def publish_blk():
+    print "callback after published one message"
 
-sid = nats.subscribe("help", {}, request_cb)
-nats.publish("help", "who can help", "", publish_cb)
-nats.request("help", "who can help", {}, subscribe_cb)
+sid = nats.subscribe("job", subscribe_blk)
+nats.publish("job", "I have jobs", "", publish_blk)
+nats.request("job", "who has jobs", request_blk)
+print nats.stat.query()
 time.sleep(1)
 nats.unsubscribe(sid)
+nats.stop()
 
 ```
 
