@@ -1,10 +1,17 @@
-"common functions"
+'''\
+Class Common: 
+    - define some constant and methods;
+attributes: 
+    - ssid:  subscribe subject id, this class dispatch sid in global;
+
+'''
+
 import urllib, os
 from nats.error import NotImplementException
 
 
 class Common(object):
-    'common data'
+    'common constants and methods'
 
     ssid = 1
 
@@ -32,7 +39,8 @@ class Common(object):
 
     @classmethod
     def get_ssid(cls):
-        'get the ssid'
+        'generate the ssid'
+        
         cls.ssid += 1
         return cls.ssid
 

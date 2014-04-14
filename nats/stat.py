@@ -1,4 +1,14 @@
-"statistics for data processed"
+'''\
+Class Stat:
+    - statistics of current client;
+    
+Attributes:
+    - msgs_received : message received from nats server;
+    - msgs_sent: message sent to nats server;
+    - bytes_received: bytes received from nats server;
+    - bytes_sent: bytes sent to nats server;
+'''
+
 import json
 
 class Stat(object):

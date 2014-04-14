@@ -1,4 +1,15 @@
-"connector between nats client and nats server"
+'''\
+Class Connector: 
+    - connection between client and nats server;
+
+Attributes;
+    - conn_opts: connection options, including auth parameters;
+    - sock :  socket 
+    - connected: conection status;
+    - data_recv: data receive thread, waiting for data from nats server;
+    - pending: pending messages record;
+
+'''
 
 from nats.error import NatsConnectException
 from nats.common import Common
@@ -62,6 +73,8 @@ class Connector(object):
     def flush_pending(self):
         "flush pending data of current connection."
 
+        print "flush {}".format(self.pending)
+
         if not self.pending: 
             return
         try: 
@@ -85,6 +98,7 @@ class Connector(object):
 
         while self.connected:
             try:
+                print "conn {}".format(self.connected)
                 wait_read(self.sock.fileno())
                 data = self.sock.recv(1024)
             except Exception, err:
@@ -111,8 +125,8 @@ class Connector(object):
         print reason
         self.connected = False  
         self.sock.close()      
-        #if self.data_recv: 
-        #   self.data_recv.join(1)
+        if self.data_recv: 
+            self.data_recv.join(1)
         #if self.ping_timer: 
         #    self.ping_timer.cancel()
         if reason:
@@ -138,5 +152,4 @@ class Connector(object):
             self.pending.append(command)
         if priority: 
             self.pending.insert(0, command) 
-        #self.pending_size += len(command)
         self.flush_pending()

@@ -1,6 +1,19 @@
-"heartbeat between client and server"
+'''\
+Class Heartbeat:
+    - heartbeat between nats client and nats server
 
-from twisted.internet.task import LoopingCall
+Attributes:
+    - pings: ping request received;
+    - pongs: pongs or callbacks of client;
+    - pings_outstanding: outstanding pings waiting for response
+    - pongs_received: pong reponse received;
+    - conn: connection between nats client and nats server;
+    - worker: work thread;
+'''
+
+#from twisted.internet.task import LoopingCall
+import threading
+import time
 from nats.protocol import Protocol
 from nats.common import Common
 import Queue
@@ -13,14 +26,13 @@ class Heartbeat(object):
         self.pongs = Queue.Queue(-1)
         self.pings_outstanding = 0
         self.pongs_received = 0
-        #self.ping_interval = Common.DEFAULT_PING_INTERVAL
-        #self.max_outstanding_pings = Common.DEFAULT_PING_MAX
         self.conn = conn
         self.worker = self.create()
 
     def send_ping(self):
         "send ping request to nats server"
         self.pings_outstanding += 1
+        self.conn.send_command(Protocol.ping_request())
         self.queue_server_rt(self.process_pong)
         self.conn.flush_pending()
 
@@ -44,11 +56,19 @@ class Heartbeat(object):
 
     def create(self):
         "create looping call to send ping request"
-        return LoopingCall(self.send_ping)
+        thr = threading.Thread(target=self.periodic_ping_timer)
+        thr.setDaemon(True)
+        return thr
+
+    def periodic_ping_timer(self):
+        'periodically send ping request to nats server'
+        while self.conn.connected:
+            self.send_ping()
+            time.sleep(Common.DEFAULT_PING_INTERVAL)
 
     def start(self):
         'start ping timer'
-        self.worker.start(Common.DEFAULT_PING_INTERVAL)
+        self.worker.start()
         
     def process_pong(self):
         "process pong response from nats server"
@@ -57,5 +77,4 @@ class Heartbeat(object):
 
     def cancel(self):
         'cancel heartbeat'
-        self.worker.stop()
-
+        self.worker.join(1)

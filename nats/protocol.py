@@ -1,7 +1,9 @@
-''''nats protocol'''
+'''\
+Class Protocol:
+     - protocol of NATS;
 
+'''
 import re, json
-from nats.error import NotImplementException
 
 class Protocol(object):
     "nats protocol class"

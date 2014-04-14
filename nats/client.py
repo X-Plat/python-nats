@@ -1,6 +1,13 @@
 # -*- coding: iso-8859-1 -*-
-'''
-Python version nats client lib for NATS message bus;
+'''\
+Class: NatsClient
+atributes:
+     - subs: subscribes records;
+     - buf:   data buffer for data received from NATS server for processing;
+     - parse_state:  state(control or message) when processing data;
+     - conn:  connection to NATS server;
+     - ping_timer:  a heartbeat mechanism of current connection;
+
 '''
 import json
 import inspect
@@ -27,12 +34,12 @@ class NatsClient(object):
         print self.__str__()  
 
     def start(self):
-        'start nats client'
+        'start nats client, open the connection, and start the ping timer;'
         self.conn.open()
         self.ping_timer.start()
 
     def stop(self):
-        'start nats client'
+        'stop the nats client, close the connection, and cancel ping timer;'
         self.conn.close()
         self.ping_timer.cancel()
 
@@ -279,6 +286,7 @@ class NatsClient(object):
                     self.ping_timer.on_ping_request()
                     self.buf = not_matched('ping', self.buf)
                 elif assert_protocol_type(self.buf, 'pong'):
+                    print "process Pong"
                     self.buf = not_matched('pong', self.buf)
                     self.ping_timer.on_pong_response()
                 elif assert_protocol_type(self.buf, 'info'):
